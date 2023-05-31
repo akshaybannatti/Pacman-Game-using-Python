@@ -1,0 +1,85 @@
+import pygame
+import random
+
+# Initialize pygame
+pygame.init()
+
+# Set up the game window
+width, height = 800, 600
+window = pygame.display.set_mode((width, height))
+pygame.display.set_caption("Pacman Game")
+
+# Define colors
+BLACK = (0, 0, 0)
+YELLOW = (255, 255, 0)
+
+# Set up Pacman
+pacman_radius = 20
+pacman_x = width // 2
+pacman_y = height // 2
+pacman_speed = 5
+
+# Set up the ghost
+ghost_radius = 20
+ghost_x = random.randint(0, width - ghost_radius)
+ghost_y = random.randint(0, height - ghost_radius)
+ghost_speed = 3
+
+# Game loop
+running = True
+clock = pygame.time.Clock()
+
+while running:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            running = False
+
+    # Move Pacman
+    keys = pygame.key.get_pressed()
+    if keys[pygame.K_LEFT]:
+        pacman_x -= pacman_speed
+    elif keys[pygame.K_RIGHT]:
+        pacman_x += pacman_speed
+    elif keys[pygame.K_UP]:
+        pacman_y -= pacman_speed
+    elif keys[pygame.K_DOWN]:
+        pacman_y += pacman_speed
+
+    # Move the ghost
+    ghost_dx = random.choice([-ghost_speed, ghost_speed])
+    ghost_dy = random.choice([-ghost_speed, ghost_speed])
+    ghost_x += ghost_dx
+    ghost_y += ghost_dy
+
+    # Boundary checking
+    if pacman_x < 0:
+        pacman_x = 0
+    elif pacman_x > width - pacman_radius:
+        pacman_x = width - pacman_radius
+    if pacman_y < 0:
+        pacman_y = 0
+    elif pacman_y > height - pacman_radius:
+        pacman_y = height - pacman_radius
+
+    if ghost_x < 0 or ghost_x > width - ghost_radius:
+        ghost_dx *= -1
+    if ghost_y < 0 or ghost_y > height - ghost_radius:
+        ghost_dy *= -1
+
+    # Clear the screen
+    window.fill(BLACK)
+
+    # Draw Pacman
+    pygame.draw.circle(window, YELLOW, (pacman_x, pacman_y), pacman_radius)
+
+    # Draw the ghost
+    pygame.draw.circle(window, (255, 0, 0), (ghost_x, ghost_y), ghost_radius)
+
+    # Update the display
+    pygame.display.flip()
+
+    # Limit frames per second
+    clock.tick(30)
+
+# Quit the game
+pygame.quit()
